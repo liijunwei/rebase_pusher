@@ -45,7 +45,7 @@ class RebasePusher
     when :check
       io.puts "check whether feature and origin/feature branches are already synced"
 
-      not_synced_branches = my_branches.each do |branch|
+      not_synced_branches = my_branches.select do |branch|
         sh("git rev-list --count #{branch}..origin/#{branch}").to_i != 0
       end
 
