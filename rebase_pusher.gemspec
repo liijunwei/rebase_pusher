@@ -28,4 +28,5 @@ Gem::Specification.new do |spec|
     end
   end
   spec.require_paths = ["lib"]
+  spec.executables   = ["rebase_push"]
 end

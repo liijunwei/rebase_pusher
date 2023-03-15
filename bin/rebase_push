@@ -1,0 +1,31 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "bundler/setup"
+require "rebase_pusher"
+
+options = {}
+
+# https://docs.ruby-lang.org/en/2.1.0/OptionParser.html
+OptionParser.new do |opts|
+  opts.banner = "Usage: rebase_push -t rebase"
+
+  opts.on_tail("-h", "--help", "Show this message") do
+    puts opts
+    exit
+  end
+
+  opts.on("-t", "--type [TYPE]", [:rebase, :reset, :force_push], "Select operation type (rebase, reset, force_push)") do |t|
+    options[:operation_type] = t
+  end
+
+  opts.on("-v", "--verbose", "Run verbosely") do |v|
+    options[:verbose] = v
+  end
+
+  opts.on("--ignore branch1,branch2", Array, "Specify ignored branches") do |branches|
+    options[:ignored_branches] = branches
+  end
+end.parse!
+
+RebasePusher.new(options).run
