@@ -39,15 +39,11 @@ class RebasePusher
 
       # https://git-scm.com/docs/git-push
       # refspec: <src>:<dst>
-      my_branches.each do |branch|
+      not_synced_branches.each do |branch|
         sh "git push origin --quiet --force-with-lease --force-if-includes #{branch}:#{branch}"
       end
     when :check
       io.puts "check whether feature and origin/feature branches are already synced"
-
-      not_synced_branches = my_branches.select do |branch|
-        sh("git rev-list --count #{branch}..origin/#{branch}").to_i != 0
-      end
 
       puts "not synced branches: #{not_synced_branches}"
     else
@@ -80,6 +76,14 @@ class RebasePusher
 
   def branches
     @branches ||= `git branch | grep "[^* ]+" -Eo`.split("\n")
+  end
+
+  def not_synced_branches
+    @not_synced_branches ||= begin
+      my_branches.select do |branch|
+        sh("git rev-list --count #{branch}..origin/#{branch}").to_i != 0
+      end
+    end
   end
 
   def my_email
