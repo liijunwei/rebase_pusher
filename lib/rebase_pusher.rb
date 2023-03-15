@@ -91,7 +91,11 @@ class RebasePusher
   end
 
   def sh(cmd)
-    io.puts "running command: #{cmd}" if options[:verbose]
+    if options[:verbose]
+      io.puts "running command: #{cmd}"
+    else
+      io.print "."
+    end
 
     out, err, status = Open3.capture3(*cmd)
 
