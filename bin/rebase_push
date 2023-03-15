@@ -15,7 +15,7 @@ OptionParser.new do |opts|
     exit
   end
 
-  opts.on("-t", "--type [TYPE]", [:rebase, :reset, :force_push], "Select operation type (rebase, reset, force_push)") do |t|
+  opts.on("-t", "--type [TYPE]", [:rebase, :reset, :force_push, :check], "Select operation type (rebase, reset, force_push, check)") do |t|
     options[:operation_type] = t
   end
 

@@ -42,6 +42,14 @@ class RebasePusher
       my_branches.each do |branch|
         sh "git push origin --quiet --force-with-lease --force-if-includes #{branch}:#{branch}"
       end
+    when :check
+      io.puts "check whether feature and origin/feature branches are already synced"
+
+      not_synced_branches = my_branches.each do |branch|
+        sh("git rev-list --count #{branch}..origin/#{branch}").to_i != 0
+      end
+
+      puts "not synced branches: #{not_synced_branches}"
     else
       raise "NOT SUPPORTTED"
     end
