@@ -13,7 +13,7 @@ class RebasePusher
   def initialize(options, io = $stdout)
     @options = options
     @io = io
-    @original_branch = `git rev-parse --abbrev-ref HEAD`
+    @original_branch = sh("git rev-parse --abbrev-ref HEAD")
   end
 
   def run
@@ -25,14 +25,14 @@ class RebasePusher
       io.puts "rebase all my branches"
 
       my_branches.each do |branch|
-        sh "git rebase --quiet #{default_branch} #{branch}"
+        sh("git rebase --quiet #{default_branch} #{branch}")
       end
     when :reset
       io.puts "reset all my branches"
 
       my_branches.each do |branch|
-        sh "git checkout --quiet #{branch}"
-        sh "git reset    --quiet --hard HEAD@{u}"
+        sh("git checkout --quiet #{branch}")
+        sh("git reset    --quiet --hard HEAD@{u}")
       end
     when :force_push
       io.puts "force push all my branches"
@@ -40,7 +40,7 @@ class RebasePusher
       # https://git-scm.com/docs/git-push
       # refspec: <src>:<dst>
       not_synced_branches.each do |branch|
-        sh "git push origin --quiet --force-with-lease --force-if-includes #{branch}:#{branch}"
+        sh("git push origin --quiet --force-with-lease --force-if-includes #{branch}:#{branch}")
       end
     when :check
       io.puts "check whether feature and origin/feature branches are already synced"
@@ -51,7 +51,7 @@ class RebasePusher
     end
 
     io.puts
-    sh "git checkout #{original_branch}"
+    sh("git checkout #{original_branch}")
   end
 
   private
@@ -60,10 +60,10 @@ class RebasePusher
   def my_branches
     @my_branches ||= begin
       branches.select do |branch|
-        sh "git checkout --quiet #{branch}"
+        sh("git checkout --quiet #{branch}")
 
-        merge_base_commitid = `git merge-base #{default_branch} HEAD`.chomp
-        author_emails = `git log --format='%ae' #{merge_base_commitid}..HEAD`.split("\n")
+        merge_base_commitid = sh("git merge-base #{default_branch} HEAD").chomp
+        author_emails = sh("git log --format='%ae' #{merge_base_commitid}..HEAD").split("\n")
 
         !author_emails.empty? && author_emails.all? {|email| email == my_email}
       end
@@ -71,11 +71,11 @@ class RebasePusher
   end
 
   def default_branch
-    @default_branch ||= `git rev-parse --abbrev-ref origin/HEAD`.chomp
+    @default_branch ||= sh("git rev-parse --abbrev-ref origin/HEAD").chomp
   end
 
   def branches
-    @branches ||= `git branch | grep "[^* ]+" -Eo`.split("\n")
+    @branches ||= sh('git branch | grep "[^* ]+" -Eo').split("\n")
   end
 
   def not_synced_branches
@@ -87,7 +87,7 @@ class RebasePusher
   end
 
   def my_email
-    @my_email ||= `git config --get user.email`.chomp
+    @my_email ||= sh("git config --get user.email").chomp
   end
 
   def sh(cmd)
