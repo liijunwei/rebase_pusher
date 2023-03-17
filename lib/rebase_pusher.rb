@@ -2,8 +2,8 @@
 
 require_relative "rebase_pusher/version"
 
-require 'optparse'
-require 'open3'
+require "optparse"
+require "open3"
 
 class RebasePusher
   attr_reader :options
@@ -58,15 +58,13 @@ class RebasePusher
 
   # Ensure I never touch other people's branch
   def my_branches
-    @my_branches ||= begin
-      branches.select do |branch|
-        sh("git checkout --quiet #{branch}")
+    @my_branches ||= branches.select do |branch|
+      sh("git checkout --quiet #{branch}")
 
-        merge_base_commitid = sh("git merge-base #{default_branch} HEAD").chomp
-        author_emails = sh("git log --format='%ae' #{merge_base_commitid}..HEAD").split("\n")
+      merge_base_commitid = sh("git merge-base #{default_branch} HEAD").chomp
+      author_emails = sh("git log --format='%ae' #{merge_base_commitid}..HEAD").split("\n")
 
-        !author_emails.empty? && author_emails.all? {|email| email == my_email}
-      end
+      !author_emails.empty? && author_emails.all? { |email| email == my_email }
     end
   end
 
@@ -79,10 +77,8 @@ class RebasePusher
   end
 
   def not_synced_branches
-    @not_synced_branches ||= begin
-      my_branches.select do |branch|
-        sh("git rev-list --count #{branch}..origin/#{branch}").to_i != 0
-      end
+    @not_synced_branches ||= my_branches.select do |branch|
+      sh("git rev-list --count #{branch}..origin/#{branch}").to_i != 0
     end
   end
 
@@ -102,10 +98,10 @@ class RebasePusher
     if status.success?
       out
     else
-      $stderr.puts "output: #{out}"
-      $stderr.puts "error: #{err}"
-      $stderr.puts "status: #{status}"
-      $stderr.puts "backtraces:"
+      warn "output: #{out}"
+      warn "error: #{err}"
+      warn "status: #{status}"
+      warn "backtraces:"
       caller.each { |e| io.puts "\t#{e}" }
 
       raise "command failed"
