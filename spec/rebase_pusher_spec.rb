@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "spec_helper"
-
 RSpec.describe RebasePusher do
   it "has a version number" do
     expect(RebasePusher::VERSION).not_to be nil
