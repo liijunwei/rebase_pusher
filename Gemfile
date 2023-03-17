@@ -4,7 +4,9 @@ source "https://rubygems.org"
 
 gemspec
 
+gem "flog"
+gem "pry"
 gem "rake"
 gem "rspec"
-gem "rubocop"
-gem "pry"
+gem "simplecov"
+gem "standard"
