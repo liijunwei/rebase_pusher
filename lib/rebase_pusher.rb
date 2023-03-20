@@ -46,7 +46,7 @@ class RebasePusher
     when :check
       io.puts "check whether feature and origin/feature branches are already synced"
 
-      puts "not synced branches: #{not_synced_branches}"
+      io.puts "not synced branches: #{not_synced_branches}"
     else
       raise "NOT SUPPORTTED"
     end
@@ -88,8 +88,6 @@ class RebasePusher
   def sh(cmd)
     if options[:verbose]
       io.puts "running command: #{cmd}"
-    else
-      io.print "."
     end
 
     out, err, status = Open3.capture3(*cmd)
