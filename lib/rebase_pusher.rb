@@ -4,6 +4,7 @@ require_relative "rebase_pusher/version"
 
 require "optparse"
 require "open3"
+require "json"
 
 class RebasePusher
   attr_reader :options
@@ -96,13 +97,15 @@ class RebasePusher
     if status.success?
       out
     else
-      warn "output: #{out}"
-      warn "error: #{err}"
-      warn "status: #{status}"
-      warn "backtraces:"
-      caller.each { |e| io.puts "\t#{e}" }
+      info = {
+        output: out,
+        error: err,
+        status: status,
+        backtraces: caller
+      }
 
-      raise "command failed"
+      warn info.to_json
+      raise "command failed: #{cmd}"
     end
   end
 end
