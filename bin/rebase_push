@@ -6,6 +6,8 @@ require_relative "../lib/rebase_pusher"
 
 options = {}
 
+ARGV << '-h' if ARGV.empty?
+
 # https://docs.ruby-lang.org/en/2.1.0/OptionParser.html
 OptionParser.new do |opts|
   opts.banner = "Usage: rebase_push -t rebase"
@@ -15,7 +17,7 @@ OptionParser.new do |opts|
     exit
   end
 
-  opts.on("-t", "--type [TYPE]", [:rebase, :reset, :force_push, :check], "Select operation type (rebase, reset, force_push, check)") do |t|
+  opts.on("-t", "--type [TYPE]", %i[rebase reset force_push], "Select operation type (rebase, reset, force_push)") do |t|
     options[:operation_type] = t
   end
 

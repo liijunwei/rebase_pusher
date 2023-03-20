@@ -43,8 +43,6 @@ class RebasePusher
       branches_to_operate.each do |branch|
         sh("git push origin --quiet --force-with-lease --force-if-includes #{branch}:#{branch}")
       end
-    when :check
-      io.puts "not synced branches: #{not_synced_branches}"
     else
       raise "NOT SUPPORTTED"
     end
