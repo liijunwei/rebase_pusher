@@ -13,6 +13,11 @@ class RebasePusher
 
   def initialize(options, io = $stdout)
     @options = options
+    if options[:operation_type].nil?
+      warn "TYPE must present"
+      exit 1
+    end
+
     @io = io
     @original_branch = sh("git rev-parse --abbrev-ref HEAD")
   end
