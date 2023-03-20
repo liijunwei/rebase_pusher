@@ -10,14 +10,24 @@ ARGV << '-h' if ARGV.empty?
 
 # https://docs.ruby-lang.org/en/2.1.0/OptionParser.html
 OptionParser.new do |opts|
-  opts.banner = "Usage: rebase_push -t rebase"
+  opts.banner =<<~EOF
+    Description: this cli rebase all YOUR branches onto repository default branch and force push them to remote real quick
+
+    Example:
+        rebase_push -t reset
+        rebase_push -t rebase
+        rebase_push -t force_push # this is slow, calm down
+        rebase_push -t reset && rebase_push -t rebase
+
+    Options:
+  EOF
 
   opts.on_tail("-h", "--help", "Show this message") do
     puts opts
     exit
   end
 
-  opts.on("-t", "--type [TYPE]", %i[rebase reset force_push], "Select operation type (rebase, reset, force_push)") do |t|
+  opts.on("-t", "--type [TYPE]", %i[rebase reset force_push], "Select operation type (reset, rebase, force_push)") do |t|
     options[:operation_type] = t
   end
 
