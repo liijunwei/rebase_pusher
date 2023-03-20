@@ -18,36 +18,34 @@ class RebasePusher
   end
 
   def run
-    to_operate_branches = my_branches - not_synced_branches
-    io.puts "to_operate_branches: #{to_operate_branches}"
+    io.puts "skipped branches: #{branches - my_branches}"
 
     case options[:operation_type]
     when :rebase
-      io.puts "rebase all my branches"
-
-      to_operate_branches.each do |branch|
+      my_branches.each do |branch|
         sh("git rebase --quiet #{default_branch} #{branch}")
       end
-    when :reset
-      io.puts "reset all my branches"
 
-      to_operate_branches.each do |branch|
+      io.puts "all my branches are rebased"
+    when :reset
+      my_branches.each do |branch|
         sh("git checkout --quiet #{branch}")
         sh("git reset    --quiet --hard HEAD@{u}")
       end
-    when :force_push
-      io.puts "force push all my branches"
 
+      io.puts "all my branches are reset"
+    when :force_push
       # https://git-scm.com/docs/git-push
       # refspec: <src>:<dst>
-      to_operate_branches.each do |branch|
+      my_branches.each do |branch|
         sh("git push origin --quiet --force-with-lease --force-if-includes #{branch}:#{branch}")
       end
+
+      io.puts "all my branches are force pushed"
     else
       raise "NOT SUPPORTTED"
     end
 
-    io.puts
     sh("git checkout --quiet #{original_branch}")
   end
 
@@ -69,12 +67,6 @@ class RebasePusher
 
   def branches
     @branches ||= sh('git branch | grep "[^* ]+" -Eo').split("\n")
-  end
-
-  def not_synced_branches
-    @not_synced_branches ||= my_branches.select do |branch|
-      sh("git rev-list --count #{branch}..origin/#{branch}").to_i != 0
-    end
   end
 
   def my_email
