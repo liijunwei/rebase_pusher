@@ -24,10 +24,6 @@ OptionParser.new do |opts|
   opts.on("-v", "--verbose", "Run verbosely") do |v|
     options[:verbose] = v
   end
-
-  opts.on("--ignore branch1,branch2", Array, "Specify ignored branches") do |branches|
-    options[:ignored_branches] = branches
-  end
 end.parse!
 
 RebasePusher.new(options).run
