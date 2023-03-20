@@ -59,10 +59,8 @@ class RebasePusher
   # Ensure I never touch other people's branch
   def my_branches
     @my_branches ||= branches.select do |branch|
-      sh("git checkout --quiet #{branch}")
-
-      merge_base_commitid = sh("git merge-base #{default_branch} HEAD").chomp
-      author_emails = sh("git log --format='%ae' #{merge_base_commitid}..HEAD").split("\n")
+      merge_base_commitid = sh("git merge-base #{default_branch} #{branch}").chomp
+      author_emails = sh("git log --format='%ae' #{merge_base_commitid}..#{branch}").split("\n").uniq
 
       !author_emails.empty? && author_emails.all? { |email| email == my_email }
     end
