@@ -44,8 +44,6 @@ class RebasePusher
         sh("git push origin --quiet --force-with-lease --force-if-includes #{branch}:#{branch}")
       end
     when :check
-      io.puts "check whether feature and origin/feature branches are already synced"
-
       io.puts "not synced branches: #{not_synced_branches}"
     else
       raise "NOT SUPPORTTED"
