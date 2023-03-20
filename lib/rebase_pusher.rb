@@ -18,20 +18,20 @@ class RebasePusher
   end
 
   def run
-    io.puts "skipped branches: #{branches - my_branches}"
-    io.puts
+    branches_to_operate = my_branches - not_synced_branches
+    io.puts "branches_to_operate: #{branches_to_operate}"
 
     case options[:operation_type]
     when :rebase
       io.puts "rebase all my branches"
 
-      my_branches.each do |branch|
+      branches_to_operate.each do |branch|
         sh("git rebase --quiet #{default_branch} #{branch}")
       end
     when :reset
       io.puts "reset all my branches"
 
-      my_branches.each do |branch|
+      branches_to_operate.each do |branch|
         sh("git checkout --quiet #{branch}")
         sh("git reset    --quiet --hard HEAD@{u}")
       end
@@ -40,7 +40,7 @@ class RebasePusher
 
       # https://git-scm.com/docs/git-push
       # refspec: <src>:<dst>
-      not_synced_branches.each do |branch|
+      branches_to_operate.each do |branch|
         sh("git push origin --quiet --force-with-lease --force-if-includes #{branch}:#{branch}")
       end
     when :check
@@ -50,7 +50,7 @@ class RebasePusher
     end
 
     io.puts
-    sh("git checkout #{original_branch}")
+    sh("git checkout --quiet #{original_branch}")
   end
 
   private
