@@ -29,23 +29,29 @@ class RebasePusher
     case options[:operation_type]
     when :rebase
       my_branches.each do |branch|
+        io.print "." if !options[:verbose]
         sh("git rebase --quiet #{default_branch} #{branch}")
       end
 
+      io.puts if !options[:verbose]
       io.puts "all my branches are rebased"
     when :reset
       my_branches.each do |branch|
+        io.print "." if !options[:verbose]
         sh("git branch --force #{branch} #{branch}@{u}")
       end
 
+      io.puts if !options[:verbose]
       io.puts "all my branches are reset"
     when :force_push
       # https://git-scm.com/docs/git-push
       # refspec: <src>:<dst>
       my_branches.each do |branch|
+        io.print "." if !options[:verbose]
         sh("git push origin --quiet --force-with-lease --force-if-includes #{branch}:#{branch}")
       end
 
+      io.puts if !options[:verbose]
       io.puts "all my branches are force pushed"
     else
       raise "NOT SUPPORTTED"
