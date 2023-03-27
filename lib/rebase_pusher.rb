@@ -24,6 +24,7 @@ class RebasePusher
 
   def run
     io.puts "skipped branches: #{branches - my_branches}"
+    sh("git checkout --quiet #{default_branch}")
 
     case options[:operation_type]
     when :rebase
@@ -34,8 +35,7 @@ class RebasePusher
       io.puts "all my branches are rebased"
     when :reset
       my_branches.each do |branch|
-        sh("git checkout --quiet #{branch}")
-        sh("git reset    --quiet --hard HEAD@{u}")
+        sh("git branch --force #{branch} #{branch}@{u}")
       end
 
       io.puts "all my branches are reset"
