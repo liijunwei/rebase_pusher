@@ -56,7 +56,7 @@ class RebasePusher
     else
       raise "NOT SUPPORTTED"
     end
-
+  ensure
     sh("git checkout --quiet #{original_branch}")
   end
 
