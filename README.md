@@ -16,6 +16,7 @@ rebase_push -h
 
 Note: cant use thread to speed it up as git operations have lock applied
 
-## Warning
+## Warnings
 
-make sure **all your changes** have been committed and pushed to remote repository before running `reset/rebase/force_push`
+1. make sure **all your changes** have been committed and pushed to remote repository before running `reset/rebase/force_push`
+2. it won't work if you have branches that are not pushed to remote(cornor case haha)
