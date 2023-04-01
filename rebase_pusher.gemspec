@@ -24,4 +24,6 @@ Gem::Specification.new do |spec|
   spec.files = Dir.glob("lib/**/*.rb") + Dir.glob("bin/*")
   spec.require_paths = ["lib"]
   spec.executables = ["rebase_push"]
+
+  spec.add_dependency "tty-spinner"
 end

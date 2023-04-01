@@ -5,11 +5,13 @@ require_relative "rebase_pusher/version"
 require "optparse"
 require "open3"
 require "json"
+require "tty-spinner"
 
 class RebasePusher
   attr_reader :options
   attr_reader :io
   attr_reader :original_branch
+  attr_reader :spinner
 
   def initialize(options, io = $stdout)
     @options = options
@@ -20,6 +22,7 @@ class RebasePusher
 
     @io = io
     @original_branch = sh("git rev-parse --abbrev-ref HEAD")
+    @spinner = TTY::Spinner.new("[:spinner] processing...", format: :bouncing_ball)
   end
 
   def run
@@ -29,8 +32,10 @@ class RebasePusher
     case options[:operation_type]
     when :rebase
       my_branches.each do |branch|
+        spinner.log("reseting #{branch}")
         io.print "." if !options[:verbose]
         sh("git rebase --quiet #{default_branch} #{branch}")
+        spinner.spin
       end
 
       io.puts if !options[:verbose]
