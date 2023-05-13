@@ -68,12 +68,12 @@ class RebasePusher
       # Make sure I never touch other people's branch
       author_emails = sh("git log --format='%ae' #{merge_base_commitid}..#{branch}").split("\n").uniq
 
-      !ignored_branches?(branch) && !author_emails.empty? && author_emails.all? { |email| email == my_email }
+      !ignored_branches.include?(branch) && !author_emails.empty? && author_emails.all? { |email| email == my_email }
     end
   end
 
-  def ignored_branches?(branch)
-    options[:ignored_branches].include?(branch)
+  def ignored_branches
+    options[:ignored_branches] || []
   end
 
   def default_branch
