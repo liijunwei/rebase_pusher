@@ -23,12 +23,12 @@ class RebasePusher
   end
 
   def run
-    io.puts "skipped branches: #{branches - my_branches}"
+    io.puts "skipped branches: #{branches - to_operate_branches}"
     sh("git checkout --quiet #{default_branch}")
 
     case options[:operation_type]
     when :rebase
-      my_branches.each do |branch|
+      to_operate_branches.each do |branch|
         io.print "." if !options[:verbose]
         sh("git rebase --quiet #{default_branch} #{branch}")
       end
@@ -36,7 +36,7 @@ class RebasePusher
       io.puts if !options[:verbose]
       io.puts "all my branches are rebased"
     when :reset
-      my_branches.each do |branch|
+      to_operate_branches.each do |branch|
         io.print "." if !options[:verbose]
         sh("git branch --force #{branch} #{branch}@{u}")
       end
@@ -46,7 +46,7 @@ class RebasePusher
     when :force_push
       # https://git-scm.com/docs/git-push
       # refspec: <src>:<dst>
-      my_branches.each do |branch|
+      to_operate_branches.each do |branch|
         io.print "." if !options[:verbose]
         sh("git push origin --quiet --force-with-lease --force-if-includes #{branch}:#{branch}")
       end
@@ -62,14 +62,18 @@ class RebasePusher
 
   private
 
-  # Ensure I never touch other people's branch
-  def my_branches
-    @my_branches ||= branches.select do |branch|
+  def to_operate_branches
+    @to_operate_branches ||= branches.select do |branch|
       merge_base_commitid = sh("git merge-base #{default_branch} #{branch}").chomp
+      # Make sure I never touch other people's branch
       author_emails = sh("git log --format='%ae' #{merge_base_commitid}..#{branch}").split("\n").uniq
 
-      !author_emails.empty? && author_emails.all? { |email| email == my_email }
+      !ignored_branches?(branch) && !author_emails.empty? && author_emails.all? { |email| email == my_email }
     end
+  end
+
+  def ignored_branches?(branch)
+    options[:ignored_branches].include?(branch)
   end
 
   def default_branch

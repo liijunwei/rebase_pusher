@@ -15,6 +15,7 @@ OptionParser.new do |opts|
 
     Example:
         rebase_push -t reset
+        rebase_push -t reset --ignore branch1,branch2,branch3
         rebase_push -t rebase
         rebase_push -t force_push # this is slow, calm down
         rebase_push -t reset && rebase_push -t rebase
@@ -33,6 +34,10 @@ OptionParser.new do |opts|
 
   opts.on("-v", "--verbose", "Run verbosely") do |v|
     options[:verbose] = v
+  end
+
+  opts.on("--ignore branch1,branch2", Array, "Specify ignored branches") do |branches|
+    options[:ignored_branches] = branches.uniq
   end
 end.parse!
 
