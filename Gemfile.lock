@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    rebase_pusher (0.1.0)
+    rebase_pusher (0.1.2)
 
 GEM
   remote: https://rubygems.org/
